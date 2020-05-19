@@ -1,0 +1,11 @@
+package:
+  version: 1.0.0
+  url: https://github.com/pooza/ginseng-youtube
+  authors:
+    - Tatsuya Koishi
+  email:
+    - tkoishi@b-shock.co.jp
+  description: ginseng YouTube libraries
+  license: MIT
+youtube:
+  url: https://www.googleapis.com/
