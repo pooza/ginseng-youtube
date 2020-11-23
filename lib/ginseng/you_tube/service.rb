@@ -16,7 +16,7 @@ module Ginseng
           'key' => api_key,
           'id' => id,
         }
-        response = @http.get(uri).to_h
+        response = @http.get(uri)
         return nil unless response['items'].present?
         return response['items'].first
       rescue => e
