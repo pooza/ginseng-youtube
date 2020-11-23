@@ -32,7 +32,7 @@ module Ginseng
 
       def test_artist
         return if Environment.ci?
-        assert_nil(@uri.artist)
+        assert_equal(@uri.artist, 'プリキュア公式YouTubeチャンネル')
         assert_equal(@music_uri.artist, '宮本佳那子')
       end
 
