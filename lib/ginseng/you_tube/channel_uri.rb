@@ -9,9 +9,7 @@ module Ginseng
       end
 
       def id
-        return query_values['v']
-      rescue
-        return nil
+        return path.split('/').last
       end
 
       def data
@@ -22,16 +20,6 @@ module Ginseng
       def title
         return data.dig('snippet', 'title')
       end
-
-      def channel_title
-        return data.dig('snippet', 'channelTitle')
-      end
-
-      def channel_id
-        return data.dig('snippet', 'channelId')
-      end
-
-      alias channnel channel_title
     end
   end
 end
