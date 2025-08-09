@@ -12,9 +12,12 @@ Gem::Specification.new do |spec|
   spec.license = package['license']
   spec.metadata['homepage_uri'] = package['url']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>=2.6'
+  spec.required_ruby_version = '>=3.3'
 
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-performance'
+  spec.add_development_dependency 'rubocop-rake'
+  spec.add_development_dependency 'rubocop-minitest'
+  spec.add_development_dependency 'ricecream'
   spec.add_development_dependency 'test-unit'
 end
