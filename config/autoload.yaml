@@ -1,0 +1,7 @@
+entries:
+  - namespace: Ginseng::YouTube
+    path: lib/ginseng/you_tube
+inflections:
+  video_uri: VideoURI
+  channel_uri: ChannelURI
+  uri: URI
