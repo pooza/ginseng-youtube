@@ -23,6 +23,35 @@ module Ginseng
         raise Ginseng::GatewayError, "invalid video '#{id}' (#{e.message})"
       end
 
+      def lookup_channel(id)
+        uri = @http.create_uri('/youtube/v3/channels')
+        uri.query_values = {
+          'part' => 'snippet',
+          'key' => api_key,
+          'id' => id,
+        }
+        response = @http.get(uri)
+        return nil unless response['items'].present?
+        return response['items'].first
+      rescue => e
+        raise Ginseng::GatewayError, "invalid video '#{id}' (#{e.message})"
+      end
+
+      def search_channels(keyword)
+        uri = @http.create_uri('/youtube/v3/search')
+        uri.query_values = {
+          'part' => 'snippet',
+          'key' => api_key,
+          'q' => keyword,
+          'type' => 'channel',
+        }
+        response = @http.get(uri)
+        return nil unless response['items'].present?
+        return response['items'].first
+      rescue => e
+        raise Ginseng::GatewayError, "invalid video '#{id}' (#{e.message})"
+      end
+
       def api_key
         return @config['/google/api/key']
       end

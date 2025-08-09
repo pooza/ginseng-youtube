@@ -15,7 +15,7 @@ module Ginseng
       end
 
       def data
-        @data ||= @service.lookup_video(id)
+        @data ||= @service.lookup_channel(id)
         return @data
       end
 
