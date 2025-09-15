@@ -9,6 +9,12 @@ module Ginseng
         assert_equal('UCSsjL41NsyqSNNbanuI0htg', @uri.id)
       end
 
+      def test_id=
+        @uri.id = 'hogefuga'
+
+        assert_equal('hogefuga', @uri.id)
+      end
+
       def test_data
         assert_kind_of(Hash, @uri.data)
       end
