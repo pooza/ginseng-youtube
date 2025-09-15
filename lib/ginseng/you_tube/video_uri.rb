@@ -14,6 +14,13 @@ module Ginseng
         return nil
       end
 
+      def id=(id)
+        values = query_values
+        values['v'] = id
+        self.query_values = values
+        @data = nil
+      end
+
       def data
         @data ||= @service.lookup_video(id)
         return @data
