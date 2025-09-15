@@ -11,6 +11,12 @@ module Ginseng
         assert_equal('mwJiuNq1eHY', @music_uri.id)
       end
 
+      def test_id=
+        @uri.id = 'hogefuga'
+
+        assert_equal('hogefuga', @uri.id)
+      end
+
       def test_data
         assert_kind_of(Hash, @uri.data)
         assert_kind_of(Hash, @music_uri.data)

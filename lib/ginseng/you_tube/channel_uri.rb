@@ -12,6 +12,11 @@ module Ginseng
         return path.split('/').last
       end
 
+      def id=(id)
+        self.path = "/channel/#{id}"
+        @data = nil
+      end
+
       def data
         @data ||= @service.lookup_channel(id)
         return @data
