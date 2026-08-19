@@ -29,7 +29,7 @@ module Ginseng
 
       def test_cnannel
         assert_equal('プリキュア公式YouTubeチャンネル', @uri.channel)
-        assert(['宮本佳那子 - Topic', 'Kanako Miyamoto - Topic'].member?(@music_uri.channel))
+        assert_includes(['宮本佳那子 - Topic', 'Kanako Miyamoto - Topic'], @music_uri.channel)
       end
 
       def test_artist
