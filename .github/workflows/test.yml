@@ -1,6 +1,11 @@
 name: test
 on:
-  - push
+  push:
+  # ⚠ push 契機だけだと、更新が止まったときに赤へ気づけない。
+  # このリポジトリは 2025-09-15 以降 push が無く、CI も 2026-02-21 の run で
+  # 緑のまま止まっていた。その間に rubocop の指摘が溜まっていた（#8）。
+  schedule:
+    - cron: '25 0 * * 1'
 env:
   CI: 'true'
 jobs:
@@ -12,14 +17,13 @@ jobs:
         ruby:
           - ruby:3.3
           - ruby:3.4
+          - ruby:4.0
     steps:
-      - uses: actions/checkout@v3
-      - name: bundle install
-        run: |
-          gem install bundler -v '~>2.0'
-          bundle install --jobs 4 --retry 3
-          bundle exec rake bundle:update
-          bundle exec rake bundle:check
-      - name: Run lint
-        run: |
-          bundle exec rubocop
+      - uses: actions/checkout@v5
+      # ⚠ 手順の正本は pooza/ginseng-style。ここには matrix と schedule だけ置く。
+      - uses: pooza/ginseng-style/.github/actions/ruby-check@main
+        with:
+          # ⚠⚠ 16 件のうち 11 件が Google の YouTube Data API を実際に叩く。
+          # API キーは gitignore された config/local.yaml にあり CI には無い。
+          # 方針が決まるまで保留する。詳細と選択肢は #9 にある。
+          test: 'false'
