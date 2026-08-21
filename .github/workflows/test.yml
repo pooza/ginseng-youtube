@@ -6,6 +6,13 @@ on:
   # 緑のまま止まっていた。その間に rubocop の指摘が溜まっていた（#8）。
   schedule:
     - cron: '25 0 * * 1'
+  # ⚠ schedule: は 60 日の無活動で GitHub に無効化される。ginseng-style の
+  # gem-watch から起こせるようにしておく。
+  workflow_dispatch:
+# ⚠⚠ 手順本体は pooza/ginseng-style の composite action を @main で参照している。
+# そこに入った変更が、このリポジトリの GITHUB_TOKEN を持って動く。既定に頼らず絞る。
+permissions:
+  contents: read
 env:
   CI: 'true'
 jobs:
@@ -20,6 +27,10 @@ jobs:
           - ruby:4.0
     steps:
       - uses: actions/checkout@v5
+        with:
+          # ⚠ 既定では認証情報がワークツリーの git config に残る。依存 gem は
+          # public な github: 参照なので、消しても bundle install に影響しない。
+          persist-credentials: false
       # ⚠ 手順の正本は pooza/ginseng-style。ここには matrix と schedule だけ置く。
       - uses: pooza/ginseng-style/.github/actions/ruby-check@main
         with:
