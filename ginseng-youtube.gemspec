@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.license = package['license']
   spec.metadata['homepage_uri'] = package['url']
   spec.require_paths = ['lib']
-  spec.required_ruby_version = '>=3.3'
+  spec.required_ruby_version = '>=3.4'
 
   spec.add_development_dependency 'ricecream'
   spec.add_development_dependency 'test-unit'
