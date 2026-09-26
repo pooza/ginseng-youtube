@@ -34,7 +34,7 @@ module Ginseng
         return nil unless response['items'].present?
         return response['items'].first
       rescue => e
-        raise Ginseng::GatewayError, "invalid video '#{id}' (#{e.message})"
+        raise Ginseng::GatewayError, "invalid channel '#{id}' (#{e.message})"
       end
 
       def search_channels(keyword)
@@ -49,7 +49,8 @@ module Ginseng
         return nil unless response['items'].present?
         return response['items'].first
       rescue => e
-        raise Ginseng::GatewayError, "invalid video '#{id}' (#{e.message})"
+        # 🔴 もとは未定義の `id` を参照していて、失敗が全部 `NameError` になっていた (#24)。
+        raise Ginseng::GatewayError, "invalid search '#{keyword}' (#{e.message})"
       end
 
       def api_key

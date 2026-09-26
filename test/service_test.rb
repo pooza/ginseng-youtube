@@ -21,6 +21,19 @@ module Ginseng
         assert_equal('プリキュア公式YouTubeチャンネル', channel.dig('snippet', 'title'))
       end
 
+      # ⚠ **API も網も叩かない。** キーが引けない形で失敗させ、例外の型だけを見る (#24)。
+      def test_failures_are_gateway_errors
+        @service.define_singleton_method(:api_key) {raise Ginseng::ConfigError, 'no key'}
+        {
+          lookup_video: 'invalid video',
+          lookup_channel: 'invalid channel',
+          search_channels: 'invalid search',
+        }.each do |method, message|
+          error = assert_raise(Ginseng::GatewayError) {@service.send(method, 'x')}
+          assert_include(error.message, message)
+        end
+      end
+
       def test_search_channels
         channels = @service.search_channels('@precure')
 
