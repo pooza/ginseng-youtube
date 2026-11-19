@@ -20,7 +20,7 @@ module Ginseng
         return nil unless response['items'].present?
         return response['items'].first
       rescue => e
-        raise wrap_error(e, "invalid video '#{id}'")
+        raise wrap_error(e, "invalid video '#{id}'"), cause: nil
       end
 
       def lookup_channel(id)
@@ -34,7 +34,7 @@ module Ginseng
         return nil unless response['items'].present?
         return response['items'].first
       rescue => e
-        raise wrap_error(e, "invalid channel '#{id}'")
+        raise wrap_error(e, "invalid channel '#{id}'"), cause: nil
       end
 
       def search_channels(keyword)
@@ -50,7 +50,7 @@ module Ginseng
         return response['items'].first
       rescue => e
         # 🔴 もとは未定義の `id` を参照していて、失敗が全部 `NameError` になっていた (#24)。
-        raise wrap_error(e, "invalid search '#{keyword}'")
+        raise wrap_error(e, "invalid search '#{keyword}'"), cause: nil
       end
 
       def api_key
@@ -69,6 +69,8 @@ module Ginseng
       # メッセージに載せるので、`/youtube/url` を http 以外に誤設定すると API キーがクエリごと出る。
       # ginseng-core 3.0.0 からは core の側でも伏せている（ginseng-core#703）が、
       # 床（1.23.1）の core では伏せていない。⚠ `mask_urls_in` は 1.23.1 にもある。
+      # 🔴 **呼ぶ側は `cause: nil` で上げる（リリース前レビュー）。** `rescue` の中の `raise` は元の例外を
+      # `cause` に付けるので、床の core ではそこに API キーが平文で残り、`full_message` や Sentry が辿る。
       def wrap_error(error, context)
         wrapped = Ginseng::GatewayError.new("#{context} (#{Ginseng::Logger.new.mask_urls_in(error.message.to_s)})")
         return wrapped unless error.is_a?(Ginseng::GatewayError)
