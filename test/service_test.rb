@@ -61,6 +61,24 @@ module Ginseng
         end
       end
 
+      # ⚠ core 7.1.0 からの `rejection`（拒否の理由）も引き継ぐ。
+      def test_failures_keep_rejection
+        stub_get {raise Ginseng::GatewayError.rejected_host("Rejected host 'x'", :unresolvable_host)}
+        each_method do |method|
+          error = assert_raise(Ginseng::GatewayError) {@service.send(method, 'x')}
+          assert_equal(:unresolvable_host, error.rejection)
+        end
+      end
+
+      # 🔴 元の例外を `cause` に連れて行かない（床の core では、そこに API キーが平文で残る）。
+      def test_failures_drop_cause
+        stub_get {raise "'ftp://example.invalid/youtube/v3/search?key=SECRETKEY123' Must be HTTP"}
+        each_method do |method|
+          error = assert_raise(Ginseng::GatewayError) {@service.send(method, 'x')}
+          assert_nil(error.cause)
+        end
+      end
+
       def test_search_channels
         channels = @service.search_channels('@precure')
 
