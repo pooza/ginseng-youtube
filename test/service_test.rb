@@ -34,10 +34,50 @@ module Ginseng
         end
       end
 
+      # 🔴 **元のメッセージの URL を伏せる (#28)。** 床（1.23.1）の core は包み直すときに伏せないので、
+      # core を通さずに素のメッセージを投げさせて、こちらで伏せていることを見る。
+      def test_failures_mask_urls_in_message
+        url = 'ftp://example.invalid/youtube/v3/search?key=SECRETKEY123&q=x'
+        stub_get {raise "'#{url}' Must be HTTP, HTTPS or Generic"}
+        each_method do |method|
+          error = assert_raise(Ginseng::GatewayError) {@service.send(method, 'x')}
+          assert_not_include(error.message, 'SECRETKEY123')
+        end
+      end
+
+      # ⚠ **上流の応答を引き継ぐ (#28)。** 引き継がないと 403 が 502 に化ける。
+      def test_failures_keep_upstream_response
+        response = Struct.new(:code, :body).new(403, '{"error":{"code":403}}')
+        stub_get do
+          error = Ginseng::GatewayError.new('Bad response 403')
+          error.response = response
+          raise error
+        end
+        each_method do |method|
+          error = assert_raise(Ginseng::GatewayError) {@service.send(method, 'x')}
+          assert_same(response, error.response)
+          assert_equal(403, error.source_status)
+          assert_equal({'error' => {'code' => 403}}, error.source_body)
+        end
+      end
+
       def test_search_channels
         channels = @service.search_channels('@precure')
 
         assert_kind_of(Hash, channels)
+      end
+
+      private
+
+      # ⚠ `define_singleton_method` に `&block` をそのまま渡すと引数の数が厳密になる（`get` は引数を取る）。
+      def stub_get(&block)
+        action = block
+        @service.define_singleton_method(:api_key) {'SECRETKEY123'}
+        @service.instance_variable_get(:@http).define_singleton_method(:get) {|*| action.call}
+      end
+
+      def each_method(&)
+        [:lookup_video, :lookup_channel, :search_channels].each(&)
       end
     end
   end
